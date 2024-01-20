@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'corsheaders', # corsheaders
     'api.apps.ApiConfig',
 ]
 
@@ -38,6 +38,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware', # corsheaders
+]
+
+CORS_ORIGIN_WHITELIST = [
+    'http://www.example.com',
 ]
 
 ROOT_URLCONF = 'healthai.urls'

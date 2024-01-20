@@ -1,5 +1,7 @@
+import json
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -17,11 +19,13 @@ system_prompts = [
 ]
 
 # Post request for health instruction
+@csrf_exempt
 def health_instruction(request):
 
     if request.method == 'POST':
-        my_data = request.POST.get('user_input', "")
-        if (my_data == ""):
+        user_input = json.loads(request.body)['user_input']
+        
+        if (user_input == ""):
             return JsonResponse({"status": "error", "message": "Please put in a valid input"}, status=400)
 
         completion = client.chat.completions.create(
@@ -29,12 +33,12 @@ def health_instruction(request):
         response_format={ "type": "json_object" },
         messages=[
             {"role": "system", "content": system_prompts[0]},
-            {"role": "user", "content": "my heart hurts"},
+            {"role": "user", "content": user_input},
         ]
         )
+        
         print(completion.choices[0].message.content)
 
-        response = {"status": "success", "response": completion.choices[0].message.content}
-        return JsonResponse(response, status=200)
+        return JsonResponse(json.loads(completion.choices[0].message.content), status=200)
     else:
         return render(request, 'health_instruction.html')
